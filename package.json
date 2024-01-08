@@ -1,0 +1,25 @@
+{
+  "name": "hexo-reveal-embed",
+  "version": "0.0.1",
+  "description": "This hexo plugin allows you to display slides created with reveal.js on your blog. Both embedded display and full screen display are possible.",
+  "engines": {
+    "node": ">=18.19.0"
+  },
+  "main": "dist/",
+  "files": [
+    "dist/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KentarouTakeda/hexo-reveal-embed.git"
+  },
+  "scripts": {},
+  "keywords": [
+    "hexo",
+    "presentation",
+    "reveal",
+    "slides"
+  ],
+  "author": "KentarouTakeda",
+  "license": "MIT"
+}
