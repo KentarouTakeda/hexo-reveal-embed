@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "This hexo plugin allows you to display slides created with reveal.js on your blog. Both embedded display and full screen display are possible.",
   "engines": {
-    "node": ">=18.19.0"
+    "node": ">=18"
   },
   "main": "dist/",
   "files": [
@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build": "tsc --noEmit false",
-    "test": "tsc"
+    "test": "jest --all --verbose --coverage"
   },
   "keywords": [
     "hexo",
