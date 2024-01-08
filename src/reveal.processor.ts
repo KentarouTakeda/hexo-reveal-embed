@@ -1,25 +1,30 @@
 import type Hexo from "hexo";
+import { mkdir, rm, writeFile } from "fs/promises";
+import { join, dirname } from "path";
 
-type T = Parameters<Hexo.extend.Processor["register"]>[0];
-
-export const revealProcessorCallback: T = ({ type, path }) => {
-  if (type === "skip") {
+export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
+  if (file.type === "skip") {
     return;
   }
 
-  if (type === "delete") {
-    deleteFile(path);
+  const filename = getFilename(this, file);
+
+  if (file.type === "delete") {
+    await rm(filename);
+
     return;
   }
 
-  if (type === "update" || type === "create") {
-    createFile(path);
+  if (file.type === "update" || file.type === "create") {
+    const body = await file.read({encoding: "utf-8"});
+    await mkdir(dirname(filename), {recursive: true});
+    await writeFile(filename, body);
+
     return;
   }
 
-  const _: never = type;
-};
+  const _: never = file.type;
+}
 
-const deleteFile = (file: string) => {};
-
-const createFile = (file: string) => {};
+const getFilename = (hexo: Hexo, file: Hexo.Box.File) =>
+  join(hexo.public_dir, "slide", file.params[1] + ".html");
