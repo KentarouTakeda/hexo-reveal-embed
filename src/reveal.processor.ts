@@ -34,6 +34,7 @@ const createHtml = (markdown: string) => `
 <html lang="en"> <!-- TODO lang -->
   <head>
     <meta charset="utf-8">
+    <meta name="googlebot" content="noindex,indexifembedded" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <title>reveal.js</title> <!-- TODO title-->
