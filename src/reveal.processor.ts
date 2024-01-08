@@ -1,6 +1,7 @@
 import type Hexo from "hexo";
 import { mkdir, rm, writeFile } from "fs/promises";
 import { join, dirname } from "path";
+import { parse } from "hexo-front-matter";
 
 export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
   if (file.type === "skip") {
@@ -16,9 +17,11 @@ export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
   }
 
   if (file.type === "update" || file.type === "create") {
-    const body = await file.read({ encoding: "utf-8" });
+    const page = await file.read({ encoding: "utf-8" });
+    const content = parse(page.toString());
+
     await mkdir(dirname(filename), { recursive: true });
-    await writeFile(filename, createHtml(body.toString(), this.config));
+    await writeFile(filename, createHtml(content, this.config));
 
     return;
   }
@@ -29,7 +32,7 @@ export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
 const getFilename = (hexo: Hexo, file: Hexo.Box.File) =>
   join(hexo.public_dir, "slide", file.params[1] + ".html");
 
-const createHtml = (markdown: string, config: Hexo['config']) => `
+const createHtml = (content: any, config: Hexo['config']) => `
 <!doctype html>
 <html lang="${config.language}">
   <head>
@@ -37,12 +40,11 @@ const createHtml = (markdown: string, config: Hexo['config']) => `
     <meta name="googlebot" content="noindex,indexifembedded" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>reveal.js</title> <!-- TODO title-->
+    <title>${content.title || config.title || 'Hexo with reveal.js'}  </title>
 
-    <!-- TODO css-->
     <link rel="stylesheet" href="/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="/reveal.js/dist/reveal.css">
-    <link rel="stylesheet" href="/reveal.js/dist/theme/black.css">
+    <link rel="stylesheet" href="/reveal.js/dist/theme/${content.theme || 'black'}.css">
 
     <!-- Theme used for syntax highlighted code -->
     <link rel="stylesheet" href="/reveal.js/plugin/highlight/monokai.css">
@@ -53,7 +55,7 @@ const createHtml = (markdown: string, config: Hexo['config']) => `
         <section data-markdown>
           <textarea data-template>
 
-${markdown}
+${content._content}
 
           </textarea>
         </section>

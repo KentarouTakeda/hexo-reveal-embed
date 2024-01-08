@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "glob": "^10.3.10",
+    "hexo-front-matter": "^4.2.1",
     "reveal.js": "^5.0.4"
   }
 }
