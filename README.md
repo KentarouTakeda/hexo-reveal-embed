@@ -29,9 +29,48 @@ npm install hexo-reveal-embed
 
    When you access the URL under `/slide/` in your browser, the slide you created will be displayed in full screen.
 
-4. Embed slides in a blog post.
+4. Embed the slide in a blog post.
 
-   *TBD*
+   Embed slides in your post with the following tag:
+
+   ```nunjucks
+   {% reveal "path/to/file" %}
+   ```
+
+   Specify the path to the slide in `path/to/file`. In the above example, the slide created in `source/_slides/path/to/file.md` and published to `/slide/path/to/file.html` will be embedded.
+
+   ```html
+   <div class="hexo-reveal-embed">
+     <iframe
+       src="/slide/path/to/file.html"
+       allowfullscreen
+       loading="lazy"
+     >
+     </iframe>
+   </div>
+   ```
+
+5. Adjust the design
+
+   This plugin does not make any design adjustments so that you can set the design as you like.
+
+   Use the `.hexo-reveal-embed` class set in the embedded tag and freely set the css. For example, the following css would display the entire width of the parent element and set the aspect ratio to 16:9.
+
+   ```css
+   .hexo-reveal-embed {
+     width: 100%;
+     height: 0;
+     padding-top: 56.25%; /* 16:9 ratio (9/16 = 0.5625) */
+     position: relative;
+   }
+   
+   .hexo-reveal-embed iframe {
+     width: 100%;
+     height: 100%;
+     position: absolute;
+     top: 0;
+   }
+   ```
 
 ### Front-matter
 
