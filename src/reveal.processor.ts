@@ -18,7 +18,7 @@ export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
   if (file.type === "update" || file.type === "create") {
     const body = await file.read({ encoding: "utf-8" });
     await mkdir(dirname(filename), { recursive: true });
-    await writeFile(filename, createHtml(body.toString()));
+    await writeFile(filename, createHtml(body.toString(), this.config));
 
     return;
   }
@@ -29,9 +29,9 @@ export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
 const getFilename = (hexo: Hexo, file: Hexo.Box.File) =>
   join(hexo.public_dir, "slide", file.params[1] + ".html");
 
-const createHtml = (markdown: string) => `
+const createHtml = (markdown: string, config: Hexo['config']) => `
 <!doctype html>
-<html lang="en"> <!-- TODO lang -->
+<html lang="${config.language}">
   <head>
     <meta charset="utf-8">
     <meta name="googlebot" content="noindex,indexifembedded" />
