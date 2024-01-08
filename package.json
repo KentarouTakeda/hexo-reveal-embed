@@ -5,26 +5,36 @@
   "engines": {
     "node": ">=18"
   },
-  "main": "dist/",
-  "files": [
-    "dist/"
-  ],
+  "homepage": "https://github.com/KentarouTakeda/hexo-reveal-embed.git",
+  "bugs": {
+    "url": "https://github.com/KentarouTakeda/hexo-reveal-embed/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/KentarouTakeda/hexo-reveal-embed.git"
   },
-  "scripts": {
-    "build": "tsc --noEmit false",
-    "test": "jest --all --verbose --coverage"
-  },
   "keywords": [
+    "blog",
     "hexo",
     "presentation",
     "reveal",
     "slides"
   ],
+  "files": [
+    "dist/"
+  ],
+  "main": "dist/",
+  "scripts": {
+    "build": "tsc --noEmit false",
+    "test": "jest --all --verbose --coverage"
+  },
   "author": "KentarouTakeda",
   "license": "MIT",
+  "dependencies": {
+    "glob": "^10.3.10",
+    "hexo-front-matter": "^4.2.1",
+    "reveal.js": "^5.0.4"
+  },
   "devDependencies": {
     "@tsconfig/node18": "^18.2.2",
     "@types/glob": "^8.1.0",
@@ -35,10 +45,5 @@
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
     "typescript": "^5.3.3"
-  },
-  "dependencies": {
-    "glob": "^10.3.10",
-    "hexo-front-matter": "^4.2.1",
-    "reveal.js": "^5.0.4"
   }
 }
