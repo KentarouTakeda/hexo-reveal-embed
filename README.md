@@ -1,6 +1,6 @@
 # Hexo Reveal Embed
 
-This Hexo plugin allows you to display slides created with [reveal.js](https://revealjs.com/) on your blog. Both embedded display and full screen display are possible.
+This [Hexo](https://hexo.io/) plugin allows you to display slides created with [reveal.js](https://revealjs.com/) on your blog. Both embedded display and full screen display are possible.
 
 ## Requirements
 
