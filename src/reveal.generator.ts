@@ -1,8 +1,20 @@
-import { createReadStream, realpathSync } from "fs";
+import { createReadStream, existsSync, realpathSync } from "fs";
 import { globSync } from "glob";
+import { cwd } from "process";
 
 export const revealGeneratorCallback = () => {
-  const baseDir = realpathSync(__dirname + "/../node_modules/reveal.js");
+  const dirs = [
+    __dirname + "/../node_modules/reveal.js",
+    cwd() + "/node_modules/reveal.js",
+  ];
+
+  const dir = dirs.find((dir) => existsSync(dir));
+
+  if (!dir) {
+    throw new Error("reveal.js not found");
+  }
+
+  const baseDir = realpathSync(dir);
 
   return [
     ...globSync(baseDir + "/dist/**/*", { nodir: true }),
