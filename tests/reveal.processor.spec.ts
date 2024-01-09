@@ -60,11 +60,12 @@ describe("reveal.processor", () => {
           expect(data).toContain("# This is a slide");
         });
 
-
         await revealProcessorCallback.bind(hexo)(file);
 
         expect(file.read).toHaveBeenCalled();
-        expect(fs.mkdir).toHaveBeenCalledWith("/test/public/slide/path/to", {recursive: true});
+        expect(fs.mkdir).toHaveBeenCalledWith("/test/public/slide/path/to", {
+          recursive: true,
+        });
         expect(fs.writeFile).toHaveBeenCalled();
       });
     });
