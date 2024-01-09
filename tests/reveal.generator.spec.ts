@@ -1,5 +1,6 @@
 jest.mock("fs", () => ({
   createReadStream: jest.fn(),
+  existsSync: jest.fn().mockReturnValue(true),
   realpathSync: jest.fn().mockReturnValue('/test'),
 }));
 
