@@ -40,7 +40,7 @@ const createHtml = (content: any, config: Hexo['config']) => `
     <meta name="googlebot" content="noindex,indexifembedded" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>${content.title || config.title || 'Hexo with reveal.js'}  </title>
+    <title>${content.title || config.title || 'Hexo with reveal.js'}</title>
 
     <link rel="stylesheet" href="/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="/reveal.js/dist/reveal.css">
