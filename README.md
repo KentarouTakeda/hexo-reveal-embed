@@ -37,7 +37,7 @@ npm install hexo-reveal-embed
    {% reveal "path/to/file" %}
    ```
 
-   Specify the path to the slide in `path/to/file`. In the above example, the slide created in `source/_slides/path/to/file.md` and published to `/slide/path/to/file.html` will be embedded.
+   Specify the path to the slide in `path/to/file`. In the above example, the slide created in `source/_slides/path/to/file.md` and published to `/slide/path/to/file.html` will be embedded. It will be rendered as follows.
 
    ```html
    <div class="hexo-reveal-embed">
