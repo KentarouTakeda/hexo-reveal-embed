@@ -67,10 +67,10 @@ ${content._content}
     <script src="/reveal.js/plugin/markdown/markdown.js"></script>
     <script src="/reveal.js/plugin/highlight/highlight.js"></script>
     <script>
-     Reveal.initialize({
-      ...${JSON.stringify(config.reveal || {})},
-       plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ],
-     });
+      Reveal.initialize({
+        ...${JSON.stringify(config.reveal || {})},
+        plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ],
+      });
     </script>
   </body>
 </html>
