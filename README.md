@@ -89,7 +89,7 @@ You can configure the behavior of reveal.js from your blog's `_config.yml`. For 
 reveal:
    config:
      hash: true
-     history: false
+     history: true
 ````
 
 The `reveal.config` settings written above will be passed to reveal.js as is. A list of reveal.js settings can be found [here](https://revealjs.com/config/).
