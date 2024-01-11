@@ -48,16 +48,22 @@ describe("reveal.processor", () => {
     });
 
     describe("create / update", () => {
-      it("", async () => {
+      it("should create the html containing markdown and config", async () => {
         const file = {
           type: "create",
           params: { "1": "path/to/slide" },
         } as Hexo.Box.File;
 
+        hexo.config.reveal = {
+          foo: "bar",
+          baz: [42, 23]
+        };
+
         file.read = jest.fn().mockResolvedValue("# This is a slide");
         fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
           expect(file).toEqual("/test/public/slide/path/to/slide.html");
           expect(data).toContain("# This is a slide");
+          expect(data).toContain('...{"foo":"bar","baz":[42,23]},');
         });
 
         await revealProcessorCallback.bind(hexo)(file);
