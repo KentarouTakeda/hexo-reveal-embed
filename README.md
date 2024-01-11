@@ -81,6 +81,19 @@ Front-matter allows you to configure the following settings for each slide.
 * `theme` 
   You can specify the name of the theme provided by reveal.js. You can check the list [here](https://revealjs.com/themes/).
 
+### Configuration
+
+You can configure the behavior of reveal.js from your blog's `_config.yml`. For example, to enable URL Fragment and Browser History for a slide in full screen view:
+
+````yaml
+reveal:
+   config:
+     hash: true
+     history: false
+````
+
+The `reveal.config` settings written above will be passed to reveal.js as is. A list of reveal.js settings can be found [here](https://revealjs.com/config/).
+
 ## Contributing and Development
 
 ```bash

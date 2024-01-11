@@ -48,16 +48,24 @@ describe("reveal.processor", () => {
     });
 
     describe("create / update", () => {
-      it("", async () => {
+      it("should create the html containing markdown and config", async () => {
         const file = {
           type: "create",
           params: { "1": "path/to/slide" },
         } as Hexo.Box.File;
 
+        hexo.config.reveal = {
+          config: {
+            foo: "bar",
+            baz: [42, 23]
+          }
+        };
+
         file.read = jest.fn().mockResolvedValue("# This is a slide");
         fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
           expect(file).toEqual("/test/public/slide/path/to/slide.html");
           expect(data).toContain("# This is a slide");
+          expect(data).toContain('...{"foo":"bar","baz":[42,23]},');
         });
 
         await revealProcessorCallback.bind(hexo)(file);
@@ -66,6 +74,22 @@ describe("reveal.processor", () => {
         expect(fs.mkdir).toHaveBeenCalledWith("/test/public/slide/path/to", {
           recursive: true,
         });
+        expect(fs.writeFile).toHaveBeenCalled();
+      });
+
+      it("should create html even if config is not specified", async ()=>{
+        const file = {
+          type: "create",
+          params: { "1": "path/to/slide" },
+        } as Hexo.Box.File;
+
+        file.read = jest.fn().mockResolvedValue("# This is a slide");
+        fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
+          expect(data).toContain('...{},');
+        });
+
+        await revealProcessorCallback.bind(hexo)(file);
+
         expect(fs.writeFile).toHaveBeenCalled();
       });
     });
