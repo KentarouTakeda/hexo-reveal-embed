@@ -1,20 +1,20 @@
-import type Hexo from "hexo";
-import { htmlTag } from "hexo-util";
+import type Hexo from 'hexo';
+import { htmlTag } from 'hexo-util';
 
-type T = Parameters<Hexo.extend.Tag["register"]>[1];
+type T = Parameters<Hexo.extend.Tag['register']>[1];
 
 export const revealTagCallback: T = ([name]) =>
   htmlTag(
-    "div",
-    { class: "hexo-reveal-embed" },
+    'div',
+    { class: 'hexo-reveal-embed' },
     htmlTag(
-      "iframe",
+      'iframe',
       {
         src: `/slide/${name}.html`,
         allowfullscreen: true,
-        loading: "lazy",
+        loading: 'lazy',
       },
       '',
     ),
-    false
+    false,
   );
