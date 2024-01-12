@@ -92,6 +92,60 @@ describe("reveal.processor", () => {
 
         expect(fs.writeFile).toHaveBeenCalled();
       });
+
+      it("should load plugins if specified", async () => {
+        const file = {
+          type: "create",
+          params: { "1": "path/to/slide" },
+        } as Hexo.Box.File;
+
+        hexo.config.reveal = {
+          plugins: ["RevealMarkdown", "RevealHighlight", "RevealNotes"],
+        };
+
+        file.read = jest.fn().mockResolvedValue("# This is a slide");
+        fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
+          expect(data).toContain("plugins: [RevealMarkdown, RevealHighlight, RevealNotes]");
+          expect(data).toContain('<script src="/reveal.js/plugin/notes/notes.js"></script>');
+          expect(data).toContain('<script src="/reveal.js/plugin/markdown/markdown.js"></script>');
+          expect(data).toContain('<script src="/reveal.js/plugin/highlight/highlight.js"></script>');
+        });
+
+        await revealProcessorCallback.bind(hexo)(file);
+
+        expect(fs.writeFile).toHaveBeenCalled();
+      });
+
+      it("should load only markdown plugin if not specified", async () => {
+        const file = {
+          type: "create",
+          params: { "1": "path/to/slide" },
+        } as Hexo.Box.File;
+
+        file.read = jest.fn().mockResolvedValue("# This is a slide");
+        fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
+          expect(data).toContain("plugins: [RevealMarkdown]");
+        });
+
+        await revealProcessorCallback.bind(hexo)(file);
+
+        expect(fs.writeFile).toHaveBeenCalled();
+      });
+
+      it('should throw an error if unknown plugin name is specified', async ()=>{
+        const file = {
+          type: "create",
+          params: { "1": "path/to/slide" },
+        } as Hexo.Box.File;
+
+        hexo.config.reveal = {
+          plugins: ["Foo"],
+        };
+
+        file.read = jest.fn().mockResolvedValue("# This is a slide");
+
+        await expect(revealProcessorCallback.bind(hexo)(file)).rejects.toThrow('Invalid plugin name: Foo')
+      });
     });
   });
 });
