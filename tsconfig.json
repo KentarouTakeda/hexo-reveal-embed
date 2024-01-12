@@ -1,9 +1,7 @@
 {
   "extends": "@tsconfig/node18/tsconfig.json",
-  "include": ["src/**/*"],
   "compilerOptions": {
     "noEmit": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./"
   }
 }

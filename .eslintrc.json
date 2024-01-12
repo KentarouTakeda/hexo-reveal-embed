@@ -1,0 +1,39 @@
+{
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "project": "./"
+      }
+    }
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/warnings",
+    "prettier"
+  ],
+  "plugins": ["import", "@typescript-eslint", "unused-imports"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "root": true,
+  "ignorePatterns": ["*.js", "dist/"],
+  "rules": {
+    "@typescript-eslint/no-unused-vars": "off",
+    "unused-imports/no-unused-imports": "warn",
+    "@typescript-eslint/consistent-type-imports": "warn",
+    "@typescript-eslint/no-redeclare": "off",
+    "no-irregular-whitespace": "off",
+    "import/order": [
+      "warn",
+      {
+        "alphabetize": {
+          "order": "asc"
+        }
+      }
+    ]
+  }
+}
