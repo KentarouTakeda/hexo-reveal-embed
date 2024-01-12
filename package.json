@@ -28,7 +28,7 @@
     "build": "tsc --noEmit false --project tsconfig.build.json",
     "fix": "eslint --fix . && prettier --write  .",
     "prepare": "npx husky install",
-    "test": "jest --all --verbose --coverage"
+    "test": "jest --all --verbose --coverage --color"
   },
   "author": "KentarouTakeda",
   "license": "MIT",
