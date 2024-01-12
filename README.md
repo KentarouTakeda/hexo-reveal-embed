@@ -83,7 +83,13 @@ Front-matter allows you to configure the following settings for each slide.
 
 ### Configuration
 
-You can configure the behavior of reveal.js from your blog's `_config.yml`. For example, to enable URL Fragment and Browser History for a slide in full screen view:
+You can configure the behavior of reveal.js from your blog's `_config.yml`.
+
+#### `config`
+
+The `reveal.config` settings will be passed to reveal.js as is. The list of reveal.js settings can be found [here](https://revealjs.com/config/).
+
+For example, to enable URL Fragment and Browser History for a slide in full screen view:
 
 ````yaml
 reveal:
@@ -92,7 +98,20 @@ reveal:
      history: true
 ````
 
-The `reveal.config` settings written above will be passed to reveal.js as is. A list of reveal.js settings can be found [here](https://revealjs.com/config/).
+#### `plugins`
+
+You can configure which plugins should be loaded, for example:
+
+```yaml
+reveal:
+  plugins:
+    - RevealHighlight
+    - RevealNotes
+```
+
+*NOTE: `RevealMarkdown` is automatically loaded even if you do not specify it.*
+
+Specify the plugin that is bundled with reveal.j. The list of available plugins can be found [here](https://revealjs.com/plugins/#built-in-plugins).
 
 ## Contributing and Development
 
