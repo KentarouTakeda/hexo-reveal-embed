@@ -2,6 +2,7 @@ jest.mock('fs/promises', () => ({
   rm: jest.fn(),
   mkdir: jest.fn(),
   writeFile: jest.fn(),
+  copyFile: jest.fn(),
 }));
 
 import fs from 'fs/promises';
@@ -112,6 +113,23 @@ describe('reveal.processor', () => {
         await revealProcessorCallback.bind(hexo)(file);
 
         expect(fs.writeFile).toHaveBeenCalled();
+      });
+
+      it('should not process anything other than md files', async () => {
+        const file = {
+          type: 'create',
+          source: '/foo.png',
+          params: { name: 'foo', ext: 'png' },
+        } as Hexo.Box.File;
+        file.read = jest.fn().mockResolvedValue('BINARY FILE');
+
+        await revealProcessorCallback.bind(hexo)(file);
+
+        expect(fs.writeFile).not.toHaveBeenCalled();
+        expect(fs.copyFile).toHaveBeenCalledWith(
+          '/foo.png',
+          '/test/public/slide/foo.png',
+        );
       });
 
       it('should throw an error if unknown plugin name is specified', async () => {
