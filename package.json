@@ -26,6 +26,7 @@
   "main": "dist/",
   "scripts": {
     "build": "tsc --noEmit false --project tsconfig.build.json",
+    "build:watch": "tsc --noEmit false --project tsconfig.build.json --watch",
     "fix": "eslint --fix . && prettier --write  .",
     "prepare": "npx husky install",
     "test": "jest --all --verbose --coverage --color"
