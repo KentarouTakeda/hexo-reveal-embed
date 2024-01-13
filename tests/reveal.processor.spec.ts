@@ -2,15 +2,20 @@ jest.mock('fs/promises', () => ({
   rm: jest.fn(),
   mkdir: jest.fn(),
   writeFile: jest.fn(),
+  copyFile: jest.fn(),
 }));
 
 import fs from 'fs/promises';
-import { join } from 'path';
 import Hexo from 'hexo';
 import { revealProcessorCallback } from '../src/reveal.processor';
 
 describe('reveal.processor', () => {
   let hexo: Hexo;
+
+  const file = {
+    type: 'create',
+    params: { name: 'path/to/slide', ext: 'md' },
+  } as Hexo.Box.File;
 
   beforeEach(() => {
     hexo = new Hexo('/test');
@@ -23,37 +28,22 @@ describe('reveal.processor', () => {
   describe('revealProcessorCallback', () => {
     describe('skip', () => {
       it('should do nothing', async () => {
-        const file = {
-          type: 'skip',
-          params: { '1': 'foo' },
-        } as Hexo.Box.File;
-
-        await revealProcessorCallback.bind(hexo)(file);
+        await revealProcessorCallback.bind(hexo)({ ...file, type: 'skip' });
       });
     });
 
     describe('delete', () => {
       it('should delete a file', async () => {
-        const file = {
-          type: 'delete',
-          params: { '1': 'foo' },
-        } as Hexo.Box.File;
-
-        await revealProcessorCallback.bind(hexo)(file);
+        await revealProcessorCallback.bind(hexo)({ ...file, type: 'delete' });
 
         expect(fs.rm).toHaveBeenCalledWith(
-          '/' + join('test', 'public', 'slide', 'foo.html'),
+          '/test/public/slide/path/to/slide.html',
         );
       });
     });
 
     describe('create / update', () => {
       it('should create the html containing markdown and config', async () => {
-        const file = {
-          type: 'create',
-          params: { '1': 'path/to/slide' },
-        } as Hexo.Box.File;
-
         hexo.config.reveal = {
           config: {
             foo: 'bar',
@@ -78,11 +68,6 @@ describe('reveal.processor', () => {
       });
 
       it('should create html even if config is not specified', async () => {
-        const file = {
-          type: 'create',
-          params: { '1': 'path/to/slide' },
-        } as Hexo.Box.File;
-
         file.read = jest.fn().mockResolvedValue('# This is a slide');
         fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
           expect(data).toContain('...{},');
@@ -94,11 +79,6 @@ describe('reveal.processor', () => {
       });
 
       it('should load plugins if specified', async () => {
-        const file = {
-          type: 'create',
-          params: { '1': 'path/to/slide' },
-        } as Hexo.Box.File;
-
         hexo.config.reveal = {
           plugins: ['RevealMarkdown', 'RevealHighlight', 'RevealNotes'],
         };
@@ -125,11 +105,6 @@ describe('reveal.processor', () => {
       });
 
       it('should load only markdown plugin if not specified', async () => {
-        const file = {
-          type: 'create',
-          params: { '1': 'path/to/slide' },
-        } as Hexo.Box.File;
-
         file.read = jest.fn().mockResolvedValue('# This is a slide');
         fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
           expect(data).toContain('plugins: [RevealMarkdown]');
@@ -140,12 +115,24 @@ describe('reveal.processor', () => {
         expect(fs.writeFile).toHaveBeenCalled();
       });
 
-      it('should throw an error if unknown plugin name is specified', async () => {
+      it('should not process anything other than md files', async () => {
         const file = {
           type: 'create',
-          params: { '1': 'path/to/slide' },
+          source: '/foo.png',
+          params: { name: 'foo', ext: 'png' },
         } as Hexo.Box.File;
+        file.read = jest.fn().mockResolvedValue('BINARY FILE');
 
+        await revealProcessorCallback.bind(hexo)(file);
+
+        expect(fs.writeFile).not.toHaveBeenCalled();
+        expect(fs.copyFile).toHaveBeenCalledWith(
+          '/foo.png',
+          '/test/public/slide/foo.png',
+        );
+      });
+
+      it('should throw an error if unknown plugin name is specified', async () => {
         hexo.config.reveal = {
           plugins: ['Foo'],
         };

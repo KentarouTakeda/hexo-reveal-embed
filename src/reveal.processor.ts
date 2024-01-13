@@ -1,4 +1,4 @@
-import { mkdir, rm, writeFile } from 'fs/promises';
+import { copyFile, mkdir, rm, writeFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import type Hexo from 'hexo';
 import { parse } from 'hexo-front-matter';
@@ -17,6 +17,12 @@ export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
   }
 
   if (file.type === 'update' || file.type === 'create') {
+    if (file.params.ext !== 'md') {
+      await mkdir(dirname(filename), { recursive: true });
+      await copyFile(file.source, filename);
+      return;
+    }
+
     const page = await file.read({ encoding: 'utf-8' });
     const content = parse(page.toString());
     const plugins = parsePlugin(this.config.reveal?.plugins);
@@ -51,7 +57,13 @@ export const parsePlugin = (plugins: unknown) => {
 };
 
 const getFilename = (hexo: Hexo, file: Hexo.Box.File) =>
-  join(hexo.public_dir, 'slide', file.params[1] + '.html');
+  join(
+    hexo.public_dir,
+    'slide',
+    file.params.name +
+      '.' +
+      (file.params.ext === 'md' ? 'html' : file.params.ext),
+  );
 
 type Plugin = {
   readonly force: boolean;
