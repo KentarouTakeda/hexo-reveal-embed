@@ -51,7 +51,11 @@ export const parsePlugin = (plugins: unknown) => {
 };
 
 const getFilename = (hexo: Hexo, file: Hexo.Box.File) =>
-  join(hexo.public_dir, 'slide', file.params[1] + '.html');
+  join(
+    hexo.public_dir,
+    'slide',
+    file.params.name + (file.params.ext === 'md' ? '.html' : file.params.ext),
+  );
 
 type Plugin = {
   readonly force: boolean;
