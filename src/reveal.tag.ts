@@ -10,7 +10,7 @@ export const revealTagCallback: T = ([name]) =>
     htmlTag(
       'iframe',
       {
-        src: `/slide/${name}.html`,
+        src: name.endsWith('/') ? `/slide/${name}` : `/slide/${name}.html`,
         allowfullscreen: true,
         loading: 'lazy',
       },
