@@ -1,7 +1,7 @@
 import { copyFile, mkdir, rm, writeFile } from 'fs/promises';
 import { join, dirname } from 'path';
+import parse from 'front-matter';
 import type Hexo from 'hexo';
-import { parse } from 'hexo-front-matter';
 
 export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
   if (file.type === 'skip') {
@@ -24,10 +24,7 @@ export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
     }
 
     const page = await file.read({ encoding: 'utf-8' });
-    const { _content: content, ...slideConfig } = parse(page.toString()) as {
-      _content: string;
-      [key: string]: unknown;
-    };
+    const { body, attributes } = parse(page.toString());
 
     const plugins = parsePlugin(this.config.reveal?.plugins);
 
@@ -35,8 +32,8 @@ export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
     await writeFile(
       filename,
       createHtml(
-        content,
-        Object.assign({}, this.config.reveal?.default ?? {}, slideConfig),
+        body,
+        { ...(this.config.reveal?.default ?? {}), ...(attributes ?? {}) },
         this.config,
         plugins,
       ),
