@@ -24,11 +24,23 @@ export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
     }
 
     const page = await file.read({ encoding: 'utf-8' });
-    const content = parse(page.toString());
+    const { _content: content, ...slideConfig } = parse(page.toString()) as {
+      _content: string;
+      [key: string]: unknown;
+    };
+
     const plugins = parsePlugin(this.config.reveal?.plugins);
 
     await mkdir(dirname(filename), { recursive: true });
-    await writeFile(filename, createHtml(content, this.config, plugins));
+    await writeFile(
+      filename,
+      createHtml(
+        content,
+        Object.assign({}, this.config.reveal?.default ?? {}, slideConfig),
+        this.config,
+        plugins,
+      ),
+    );
 
     return;
   }
@@ -81,7 +93,8 @@ const Plugins: readonly Plugin[] = [
 ];
 
 const createHtml = (
-  content: Record<string, unknown> & { _content: string },
+  content: string,
+  slideConfig: Record<string, unknown>,
   config: Hexo['config'],
   plugins: Plugin[],
 ) => `
@@ -92,12 +105,12 @@ const createHtml = (
     <meta name="googlebot" content="noindex,indexifembedded" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>${content.title || config.title || 'Hexo with reveal.js'}</title>
+    <title>${slideConfig.title || config.title || 'Hexo with reveal.js'}</title>
 
     <link rel="stylesheet" href="/reveal.js/dist/reset.css">
     <link rel="stylesheet" href="/reveal.js/dist/reveal.css">
     <link rel="stylesheet" href="/reveal.js/dist/theme/${
-      content.theme || 'black'
+      slideConfig.theme || 'black'
     }.css">
 
     <!-- Theme used for syntax highlighted code -->
@@ -109,7 +122,7 @@ const createHtml = (
         <section data-markdown>
           <textarea data-template>
 
-${content._content}
+${content}
 
           </textarea>
         </section>
