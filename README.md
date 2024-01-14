@@ -13,8 +13,7 @@ This [Hexo](https://hexo.io/) plugin allows you to display slides created with [
 npm install hexo-reveal-embed
 ```
 
-You can find an overview of how to install and configure it in the following blog post (Japanese):
-
+You can find an overview of how to install and configure it in the following blog post (Japanese):  
 *次のブログ記事で、インストールと設定の概要を確認できます:*
 
 *[ブログ記事へのスライド埋め込みプラグイン Hexo Reveal Embed を公開した](https://no-hack-no.life/post/2024-01-13-introduce-hexo-reveal-embed/)*
