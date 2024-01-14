@@ -91,6 +91,18 @@ Front-matter allows you to configure the following settings for each slide.
 
 You can configure the behavior of reveal.js from your blog's `_config.yml`.
 
+#### `default`
+
+Set the default value of front-matter for each slide. For example, to set the theme of all slides to `white` by default, use the following:
+
+````yaml
+reveal:
+  config:
+    theme: white
+````
+
+If both are set, front-matter takes precedence.
+
 #### `config`
 
 The `reveal.config` settings will be passed to reveal.js as is. The list of reveal.js settings can be found [here](https://revealjs.com/config/).

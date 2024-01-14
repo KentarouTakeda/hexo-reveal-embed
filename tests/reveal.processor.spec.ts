@@ -17,6 +17,15 @@ describe('reveal.processor', () => {
     params: { name: 'path/to/slide', ext: 'md' },
   } as Hexo.Box.File;
 
+  const markdown = '# This is a slide';
+  const frontMatter = [
+    '---',
+    'title: Foo Title',
+    'theme: barTheme',
+    '---',
+    '',
+  ].join('\n');
+
   beforeEach(() => {
     hexo = new Hexo('/test');
   });
@@ -43,7 +52,7 @@ describe('reveal.processor', () => {
     });
 
     describe('create / update', () => {
-      it('should create the html containing markdown and config', async () => {
+      it('should create the html containing markdown and config, not containing front-matter', async () => {
         hexo.config.reveal = {
           config: {
             foo: 'bar',
@@ -51,10 +60,11 @@ describe('reveal.processor', () => {
           },
         };
 
-        file.read = jest.fn().mockResolvedValue('# This is a slide');
+        file.read = jest.fn().mockResolvedValue(markdown);
         fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
           expect(file).toEqual('/test/public/slide/path/to/slide.html');
-          expect(data).toContain('# This is a slide');
+          expect(data).toContain(markdown);
+          expect(data).not.toContain(frontMatter);
           expect(data).toContain('...{"foo":"bar","baz":[42,23]},');
         });
 
@@ -68,7 +78,7 @@ describe('reveal.processor', () => {
       });
 
       it('should create html even if config is not specified', async () => {
-        file.read = jest.fn().mockResolvedValue('# This is a slide');
+        file.read = jest.fn().mockResolvedValue(markdown);
         fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
           expect(data).toContain('...{},');
         });
@@ -83,7 +93,7 @@ describe('reveal.processor', () => {
           plugins: ['RevealMarkdown', 'RevealHighlight', 'RevealNotes'],
         };
 
-        file.read = jest.fn().mockResolvedValue('# This is a slide');
+        file.read = jest.fn().mockResolvedValue(markdown);
         fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
           expect(data).toContain(
             'plugins: [RevealMarkdown, RevealHighlight, RevealNotes]',
@@ -105,7 +115,7 @@ describe('reveal.processor', () => {
       });
 
       it('should load only markdown plugin if not specified', async () => {
-        file.read = jest.fn().mockResolvedValue('# This is a slide');
+        file.read = jest.fn().mockResolvedValue(markdown);
         fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
           expect(data).toContain('plugins: [RevealMarkdown]');
         });
@@ -137,11 +147,49 @@ describe('reveal.processor', () => {
           plugins: ['Foo'],
         };
 
-        file.read = jest.fn().mockResolvedValue('# This is a slide');
+        file.read = jest.fn().mockResolvedValue(markdown);
 
         await expect(revealProcessorCallback.bind(hexo)(file)).rejects.toThrow(
           'Invalid plugin name: Foo',
         );
+      });
+
+      it('should be configured with front-matter preferentially', async () => {
+        file.read = jest.fn().mockResolvedValue(frontMatter + markdown);
+
+        hexo.config.reveal = {
+          default: { title: 'Hoge Title', theme: 'fugaTheme' },
+        };
+
+        fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
+          expect(data).toContain('<title>Foo Title</title>');
+          expect(data).toContain(
+            '<link rel="stylesheet" href="/reveal.js/dist/theme/barTheme.css">',
+          );
+        });
+
+        await revealProcessorCallback.bind(hexo)(file);
+
+        expect(fs.writeFile).toHaveBeenCalled();
+      });
+
+      it('should be configured with default config', async () => {
+        file.read = jest.fn().mockResolvedValue(markdown);
+
+        hexo.config.reveal = {
+          default: { title: 'Hoge Title', theme: 'fugaTheme' },
+        };
+
+        fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
+          expect(data).toContain('<title>Hoge Title</title>');
+          expect(data).toContain(
+            '<link rel="stylesheet" href="/reveal.js/dist/theme/fugaTheme.css">',
+          );
+        });
+
+        await revealProcessorCallback.bind(hexo)(file);
+
+        expect(fs.writeFile).toHaveBeenCalled();
       });
     });
   });
