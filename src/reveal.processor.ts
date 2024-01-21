@@ -75,18 +75,22 @@ const getFilename = (hexo: Hexo, file: Hexo.Box.File) =>
   );
 
 type Plugin = {
-  readonly force: boolean;
+  readonly force?: true;
   readonly name: string;
-  readonly path: string;
+  readonly url: string;
 };
 
 const Plugins: readonly Plugin[] = [
-  { force: true, name: 'RevealMarkdown', path: 'markdown/markdown.js' },
-  { force: false, name: 'RevealHighlight', path: 'highlight/highlight.js' },
-  { force: false, name: 'RevealSearch', path: 'math/math.js' },
-  { force: false, name: 'RevealNotes', path: 'notes/notes.js' },
-  { force: false, name: 'RevealMath', path: 'search/search.js' },
-  { force: false, name: 'RevealZoom', path: 'zoom/zoom.js' },
+  {
+    force: true,
+    name: 'RevealMarkdown',
+    url: '/reveal.js/plugin/markdown/markdown.js',
+  },
+  { name: 'RevealHighlight', url: '/reveal.js/plugin/highlight/highlight.js' },
+  { name: 'RevealSearch', url: '/reveal.js/plugin/math/math.js' },
+  { name: 'RevealNotes', url: '/reveal.js/plugin/notes/notes.js' },
+  { name: 'RevealMath', url: '/reveal.js/plugin/search/search.js' },
+  { name: 'RevealZoom', url: '/reveal.js/plugin/zoom/zoom.js' },
 ];
 
 const createHtml = (
@@ -127,11 +131,7 @@ ${content}
     </div>
 
     <script src="/reveal.js/dist/reveal.js"></script>
-    ${plugins
-      .map(
-        (plugin) => `<script src="/reveal.js/plugin/${plugin.path}"></script>`,
-      )
-      .join('')}
+    ${plugins.map((plugin) => `<script src="${plugin.url}"></script>`).join('')}
     <script>
       Reveal.initialize({
         ...${JSON.stringify(config.reveal?.config || {})},
