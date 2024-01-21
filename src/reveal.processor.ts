@@ -125,6 +125,9 @@ const createHtml = (
 
     <!-- Theme used for syntax highlighted code -->
     <link rel="stylesheet" href="/reveal.js/plugin/highlight/monokai.css">
+
+    ${config.reveal?.css_urls?.map((url: unknown) => `<link rel="stylesheet" href="${url}">`).join('') || ''}
+
   </head>
   <body>
     <div class="reveal">
@@ -141,6 +144,7 @@ ${content}
 
     <script src="/reveal.js/dist/reveal.js"></script>
     ${plugins.map((plugin) => `<script src="${plugin.url}"></script>`).join('')}
+    ${config.reveal?.js_urls?.map((url: unknown) => `<script src="${url}"></script>`).join('') || ''}
     <script>
       Reveal.initialize({
         ...${JSON.stringify(config.reveal?.config || {})},

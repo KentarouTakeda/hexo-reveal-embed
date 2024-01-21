@@ -143,6 +143,40 @@ describe('reveal.processor', () => {
         expect(fs.writeFile).toHaveBeenCalled();
       });
 
+      it('should load external css if specified', async () => {
+        hexo.config.reveal = {
+          css_urls: ['https://example.com/foo.css'],
+        };
+
+        file.read = jest.fn().mockResolvedValue(markdown);
+        fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
+          expect(data).toContain(
+            '<link rel="stylesheet" href="https://example.com/foo.css">',
+          );
+        });
+
+        await revealProcessorCallback.bind(hexo)(file);
+
+        expect(fs.writeFile).toHaveBeenCalled();
+      });
+
+      it('should load external js if specified', async () => {
+        hexo.config.reveal = {
+          js_urls: ['https://example.com/foo.js'],
+        };
+
+        file.read = jest.fn().mockResolvedValue(markdown);
+        fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
+          expect(data).toContain(
+            '<script src="https://example.com/foo.js"></script>',
+          );
+        });
+
+        await revealProcessorCallback.bind(hexo)(file);
+
+        expect(fs.writeFile).toHaveBeenCalled();
+      });
+
       it('should not process anything other than md files', async () => {
         const file = {
           type: 'create',
