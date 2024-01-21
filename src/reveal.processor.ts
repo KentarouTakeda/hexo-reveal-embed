@@ -56,13 +56,16 @@ export const parsePlugin = (plugins: unknown) => {
   }
 
   const invalidName = parsed.find(
-    (plugin) => Plugins.find((p) => p.name === plugin) === undefined,
+    (plugin) =>
+      Plugins.find((p) => p.name === plugin || isPlugin(plugin)) === undefined,
   );
   if (invalidName) {
     throw new Error(`Invalid plugin name: ${invalidName}`);
   }
 
-  return Plugins.filter((v) => parsed.includes(v.name) || v.force);
+  const ret = Plugins.filter((v) => parsed.includes(v.name) || v.force);
+
+  return ret;
 };
 
 const getFilename = (hexo: Hexo, file: Hexo.Box.File) =>
@@ -79,6 +82,11 @@ type Plugin = {
   readonly name: string;
   readonly url: string;
 };
+const isPlugin = (v: unknown): v is Plugin =>
+  v != null &&
+  typeof v === 'object' &&
+  typeof Reflect.get(v, 'name') === 'string' &&
+  typeof Reflect.get(v, 'url') === 'string';
 
 const Plugins: readonly Plugin[] = [
   {

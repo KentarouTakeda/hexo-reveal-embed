@@ -125,6 +125,26 @@ describe('reveal.processor', () => {
         expect(fs.writeFile).toHaveBeenCalled();
       });
 
+      it('should load external plugin if specified', async () => {
+        hexo.config.reveal = {
+          plugins: [
+            {
+              name: 'FooPlugin',
+              url: 'https://example.com/foo.js',
+            },
+          ],
+        };
+
+        file.read = jest.fn().mockResolvedValue(markdown);
+        fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
+          expect(data).toContain('plugins: [RevealMarkdown]');
+        });
+
+        await revealProcessorCallback.bind(hexo)(file);
+
+        expect(fs.writeFile).toHaveBeenCalled();
+      });
+
       it('should not process anything other than md files', async () => {
         const file = {
           type: 'create',
