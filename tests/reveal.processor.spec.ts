@@ -127,17 +127,15 @@ describe('reveal.processor', () => {
 
       it('should load external plugin if specified', async () => {
         hexo.config.reveal = {
-          plugins: [
-            {
-              name: 'FooPlugin',
-              url: 'https://example.com/foo.js',
-            },
-          ],
+          plugins: [{ name: 'FooPlugin', url: 'https://example.com/foo.js' }],
         };
 
         file.read = jest.fn().mockResolvedValue(markdown);
         fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
-          expect(data).toContain('plugins: [RevealMarkdown]');
+          expect(data).toContain(
+            '<script src="https://example.com/foo.js"></script>',
+          );
+          expect(data).toContain('plugins: [RevealMarkdown, FooPlugin]');
         });
 
         await revealProcessorCallback.bind(hexo)(file);

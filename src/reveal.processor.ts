@@ -63,9 +63,10 @@ export const parsePlugin = (plugins: unknown) => {
     throw new Error(`Invalid plugin name: ${invalidName}`);
   }
 
-  const ret = Plugins.filter((v) => parsed.includes(v.name) || v.force);
-
-  return ret;
+  return [
+    ...Plugins.filter((v) => parsed.includes(v.name) || v.force),
+    ...parsed.filter(isPlugin),
+  ];
 };
 
 const getFilename = (hexo: Hexo, file: Hexo.Box.File) =>
