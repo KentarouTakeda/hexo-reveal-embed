@@ -132,7 +132,7 @@ reveal:
 
 *NOTE: `RevealMarkdown` is automatically loaded even if you do not specify it.*
 
-Specify the plugin that is bundled with reveal.j. The list of available plugins can be found [here](https://revealjs.com/plugins/#built-in-plugins).
+Specify the plugin that is bundled with reveal.js. The list of available plugins can be found [here](https://revealjs.com/plugins/#built-in-plugins).
 
 #### `css_urls` / `js_urls`
 
