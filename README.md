@@ -122,13 +122,31 @@ You can configure which plugins should be loaded, for example:
 ```yaml
 reveal:
   plugins:
+    # Specify only the name of the plugin bundled with reveal.js:
     - RevealHighlight
     - RevealNotes
+    # Specify the `name` and `url` of the third-party plugin
+    - name: ThirdPartyPlugin
+      url: https://thirt-party.example.com/path/to/plugin.js
 ```
 
 *NOTE: `RevealMarkdown` is automatically loaded even if you do not specify it.*
 
 Specify the plugin that is bundled with reveal.j. The list of available plugins can be found [here](https://revealjs.com/plugins/#built-in-plugins).
+
+#### `css_urls` / `js_urls`
+
+You can specify additional css and js to load, for example:
+
+```yaml
+reveal:
+  css_urls:
+    - https://thirt-party.example.com/path/to/style.css
+    - /path/to/local/style.css
+  js_urls:
+    - https://thirt-party.example.com/path/to/script.css
+    - /path/to/local/script.css
+```
 
 ## Contributing and Development
 

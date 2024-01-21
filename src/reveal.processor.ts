@@ -56,13 +56,17 @@ export const parsePlugin = (plugins: unknown) => {
   }
 
   const invalidName = parsed.find(
-    (plugin) => Plugins.find((p) => p.name === plugin) === undefined,
+    (plugin) =>
+      Plugins.find((p) => p.name === plugin || isPlugin(plugin)) === undefined,
   );
   if (invalidName) {
     throw new Error(`Invalid plugin name: ${invalidName}`);
   }
 
-  return Plugins.filter((v) => parsed.includes(v.name) || v.force);
+  return [
+    ...Plugins.filter((v) => parsed.includes(v.name) || v.force),
+    ...parsed.filter(isPlugin),
+  ];
 };
 
 const getFilename = (hexo: Hexo, file: Hexo.Box.File) =>
@@ -75,18 +79,27 @@ const getFilename = (hexo: Hexo, file: Hexo.Box.File) =>
   );
 
 type Plugin = {
-  readonly force: boolean;
+  readonly force?: true;
   readonly name: string;
-  readonly path: string;
+  readonly url: string;
 };
+const isPlugin = (v: unknown): v is Plugin =>
+  v != null &&
+  typeof v === 'object' &&
+  typeof Reflect.get(v, 'name') === 'string' &&
+  typeof Reflect.get(v, 'url') === 'string';
 
 const Plugins: readonly Plugin[] = [
-  { force: true, name: 'RevealMarkdown', path: 'markdown/markdown.js' },
-  { force: false, name: 'RevealHighlight', path: 'highlight/highlight.js' },
-  { force: false, name: 'RevealSearch', path: 'math/math.js' },
-  { force: false, name: 'RevealNotes', path: 'notes/notes.js' },
-  { force: false, name: 'RevealMath', path: 'search/search.js' },
-  { force: false, name: 'RevealZoom', path: 'zoom/zoom.js' },
+  {
+    force: true,
+    name: 'RevealMarkdown',
+    url: '/reveal.js/plugin/markdown/markdown.js',
+  },
+  { name: 'RevealHighlight', url: '/reveal.js/plugin/highlight/highlight.js' },
+  { name: 'RevealSearch', url: '/reveal.js/plugin/math/math.js' },
+  { name: 'RevealNotes', url: '/reveal.js/plugin/notes/notes.js' },
+  { name: 'RevealMath', url: '/reveal.js/plugin/search/search.js' },
+  { name: 'RevealZoom', url: '/reveal.js/plugin/zoom/zoom.js' },
 ];
 
 const createHtml = (
@@ -112,6 +125,9 @@ const createHtml = (
 
     <!-- Theme used for syntax highlighted code -->
     <link rel="stylesheet" href="/reveal.js/plugin/highlight/monokai.css">
+
+    ${config.reveal?.css_urls?.map((url: unknown) => `<link rel="stylesheet" href="${url}">`).join('') || ''}
+
   </head>
   <body>
     <div class="reveal">
@@ -127,11 +143,8 @@ ${content}
     </div>
 
     <script src="/reveal.js/dist/reveal.js"></script>
-    ${plugins
-      .map(
-        (plugin) => `<script src="/reveal.js/plugin/${plugin.path}"></script>`,
-      )
-      .join('')}
+    ${plugins.map((plugin) => `<script src="${plugin.url}"></script>`).join('')}
+    ${config.reveal?.js_urls?.map((url: unknown) => `<script src="${url}"></script>`).join('') || ''}
     <script>
       Reveal.initialize({
         ...${JSON.stringify(config.reveal?.config || {})},
