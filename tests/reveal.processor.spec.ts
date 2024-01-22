@@ -7,10 +7,12 @@ jest.mock('fs/promises', () => ({
 
 import fs from 'fs/promises';
 import Hexo from 'hexo';
+import { getMyVersion } from '../src/get-my-version';
 import { revealProcessorCallback } from '../src/reveal.processor';
 
 describe('reveal.processor', () => {
   let hexo: Hexo;
+  let version: string;
 
   const file = {
     type: 'create',
@@ -28,6 +30,7 @@ describe('reveal.processor', () => {
 
   beforeEach(() => {
     hexo = new Hexo('/test');
+    version = getMyVersion();
   });
 
   afterEach(() => {
@@ -63,6 +66,23 @@ describe('reveal.processor', () => {
         file.read = jest.fn().mockResolvedValue(markdown);
         fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
           expect(file).toEqual('/test/public/slide/path/to/slide.html');
+
+          expect(data).toContain(
+            `<link rel="stylesheet" href="/reveal.js/dist/reset.css?v=${version}">`,
+          );
+          expect(data).toContain(
+            `<link rel="stylesheet" href="/reveal.js/dist/reveal.css?v=${version}">`,
+          );
+          expect(data).toContain(
+            `<link rel="stylesheet" href="/reveal.js/dist/theme/black.css?v=${version}">`,
+          );
+          expect(data).toContain(
+            `<link rel="stylesheet" href="/reveal.js/plugin/highlight/monokai.css?v=${version}">`,
+          );
+          expect(data).toContain(
+            `<script src="/reveal.js/dist/reveal.js?v=${version}"></script>`,
+          );
+
           expect(data).toContain(markdown);
           expect(data).not.toContain(frontMatter);
           expect(data).toContain('...{"foo":"bar","baz":[42,23]},');
@@ -99,13 +119,13 @@ describe('reveal.processor', () => {
             'plugins: [RevealMarkdown, RevealHighlight, RevealNotes]',
           );
           expect(data).toContain(
-            '<script src="/reveal.js/plugin/notes/notes.js"></script>',
+            `<script src="/reveal.js/plugin/notes/notes.js?v=${version}"></script>`,
           );
           expect(data).toContain(
-            '<script src="/reveal.js/plugin/markdown/markdown.js"></script>',
+            `<script src="/reveal.js/plugin/markdown/markdown.js?v=${version}"></script>`,
           );
           expect(data).toContain(
-            '<script src="/reveal.js/plugin/highlight/highlight.js"></script>',
+            `<script src="/reveal.js/plugin/highlight/highlight.js?v=${version}"></script>`,
           );
         });
 
@@ -216,7 +236,7 @@ describe('reveal.processor', () => {
         fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
           expect(data).toContain('<title>Foo Title</title>');
           expect(data).toContain(
-            '<link rel="stylesheet" href="/reveal.js/dist/theme/barTheme.css">',
+            `<link rel="stylesheet" href="/reveal.js/dist/theme/barTheme.css?v=${version}">`,
           );
         });
 
@@ -235,7 +255,7 @@ describe('reveal.processor', () => {
         fs.writeFile = jest.fn().mockImplementation(async (file, data) => {
           expect(data).toContain('<title>Hoge Title</title>');
           expect(data).toContain(
-            '<link rel="stylesheet" href="/reveal.js/dist/theme/fugaTheme.css">',
+            `<link rel="stylesheet" href="/reveal.js/dist/theme/fugaTheme.css?v=${version}">`,
           );
         });
 
