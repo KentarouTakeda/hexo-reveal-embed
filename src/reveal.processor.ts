@@ -2,6 +2,7 @@ import { copyFile, mkdir, rm, writeFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import parse from 'front-matter';
 import type Hexo from 'hexo';
+import { getMyVersion } from './get-my-version';
 
 export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
   if (file.type === 'skip') {
@@ -32,6 +33,7 @@ export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
     await writeFile(
       filename,
       createHtml(
+        getMyVersion(),
         body,
         { ...(this.config.reveal?.default ?? {}), ...(attributes ?? {}) },
         this.config,
@@ -45,26 +47,28 @@ export async function revealProcessorCallback(this: Hexo, file: Hexo.Box.File) {
   const _: never = file.type;
 }
 
-export const parsePlugin = (plugins: unknown) => {
+export const parsePlugin = (input: unknown) => {
   const parsed =
-    typeof plugins === 'string' ? [plugins]
-    : plugins == null ? []
-    : plugins;
+    typeof input === 'string' ? [input]
+    : input == null ? []
+    : input;
 
   if (!Array.isArray(parsed)) {
     throw new Error('`plugins` must be an array');
   }
 
+  const plugins = getBundledPlugin(getMyVersion());
+
   const invalidName = parsed.find(
     (plugin) =>
-      Plugins.find((p) => p.name === plugin || isPlugin(plugin)) === undefined,
+      plugins.find((p) => p.name === plugin || isPlugin(plugin)) === undefined,
   );
   if (invalidName) {
     throw new Error(`Invalid plugin name: ${invalidName}`);
   }
 
   return [
-    ...Plugins.filter((v) => parsed.includes(v.name) || v.force),
+    ...plugins.filter((v) => parsed.includes(v.name) || v.force),
     ...parsed.filter(isPlugin),
   ];
 };
@@ -89,6 +93,12 @@ const isPlugin = (v: unknown): v is Plugin =>
   typeof Reflect.get(v, 'name') === 'string' &&
   typeof Reflect.get(v, 'url') === 'string';
 
+const getBundledPlugin = (version: string) =>
+  [...Plugins].map((plugin) => ({
+    ...plugin,
+    url: plugin.url + `?v=${version}`,
+  }));
+
 const Plugins: readonly Plugin[] = [
   {
     force: true,
@@ -103,6 +113,7 @@ const Plugins: readonly Plugin[] = [
 ];
 
 const createHtml = (
+  version: string,
   content: string,
   slideConfig: Record<string, unknown>,
   config: Hexo['config'],
@@ -117,14 +128,14 @@ const createHtml = (
 
     <title>${slideConfig.title || config.title || 'Hexo with reveal.js'}</title>
 
-    <link rel="stylesheet" href="/reveal.js/dist/reset.css">
-    <link rel="stylesheet" href="/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="/reveal.js/dist/reset.css?v=${version}">
+    <link rel="stylesheet" href="/reveal.js/dist/reveal.css?v=${version}">
     <link rel="stylesheet" href="/reveal.js/dist/theme/${
       slideConfig.theme || 'black'
-    }.css">
+    }.css?v=${version}">
 
     <!-- Theme used for syntax highlighted code -->
-    <link rel="stylesheet" href="/reveal.js/plugin/highlight/monokai.css">
+    <link rel="stylesheet" href="/reveal.js/plugin/highlight/monokai.css?v=${version}">
 
     ${config.reveal?.css_urls?.map((url: unknown) => `<link rel="stylesheet" href="${url}">`).join('') || ''}
 
@@ -142,7 +153,7 @@ ${content}
       </div>
     </div>
 
-    <script src="/reveal.js/dist/reveal.js"></script>
+    <script src="/reveal.js/dist/reveal.js?v=${version}"></script>
     ${plugins.map((plugin) => `<script src="${plugin.url}"></script>`).join('')}
     ${config.reveal?.js_urls?.map((url: unknown) => `<script src="${url}"></script>`).join('') || ''}
     <script>
