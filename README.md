@@ -110,9 +110,9 @@ For example, to enable URL Fragment and Browser History for a slide in full scre
 
 ````yaml
 reveal:
-   config:
-     hash: true
-     history: true
+  config:
+    hash: true
+    history: true
 ````
 
 #### `plugins`
