@@ -96,7 +96,7 @@ Set the default value of front-matter for each slide. For example, to set the th
 
 ````yaml
 reveal:
-  config:
+  default:
     theme: white
 ````
 
