@@ -102,6 +102,15 @@ reveal:
 
 If both are set, front-matter takes precedence.
 
+#### `anchor_target`
+
+Set the `target` attribute of the `a` tag. Default is `_top`.
+
+````yaml
+reveal:
+  anchor_target: _blank
+````
+
 #### `config`
 
 The `reveal.config` settings will be passed to reveal.js as is. The list of reveal.js settings can be found [here](https://revealjs.com/config/).
