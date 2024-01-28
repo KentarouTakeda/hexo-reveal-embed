@@ -160,6 +160,9 @@ ${content}
       Reveal.initialize({
         ...${JSON.stringify(config.reveal?.config || {})},
         plugins: [${plugins.map((plugin) => `${plugin.name}`).join(', ')}],
+      }).then(() => {
+        document.querySelectorAll('.reveal .slides a[href]:not([target])')
+          .forEach((a) => a.target ||= ( ${JSON.stringify(config.reveal?.anchor_target)} || '_top'));
       });
     </script>
   </body>
