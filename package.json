@@ -68,6 +68,6 @@
     ]
   },
   "run-if-changed": {
-    "package-lock.json": "npm install --prefer-offline --no-audit"
+    "package.json": "npm install --prefer-offline --no-audit"
   }
 }
