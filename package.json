@@ -28,7 +28,7 @@
     "build": "tsc --noEmit false --project tsconfig.build.json",
     "build:watch": "tsc --noEmit false --project tsconfig.build.json --watch",
     "fix": "eslint --fix . && prettier --write  .",
-    "prepare": "npx husky install",
+    "prepare": "husky",
     "test": "jest --all --verbose --coverage --color"
   },
   "author": "KentarouTakeda",
@@ -46,15 +46,15 @@
     "@types/hexo": "^3.8.12",
     "@types/jest": "^29.5.11",
     "@types/node": "^18.19.5",
-    "@typescript-eslint/eslint-plugin": "^6.18.1",
-    "@typescript-eslint/parser": "^6.18.1",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-unused-imports": "^3.0.0",
     "hexo": "^6.3.0",
-    "husky": "^8.0.3",
+    "husky": "^9.0.11",
     "jest": "^29.7.0",
     "lint-staged": "^15.2.0",
     "prettier": "^3.1.1",
@@ -68,6 +68,6 @@
     ]
   },
   "run-if-changed": {
-    "package-lock.json": "npm install --prefer-offline --no-audit"
+    "package.json": "npm install --prefer-offline --no-audit"
   }
 }
